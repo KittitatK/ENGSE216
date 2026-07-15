@@ -1,4 +1,4 @@
-package PhonebookFix;
+package LAB.Lab1_Phonebook.PhonebookFix;
 
 public class recordData {
     String name;

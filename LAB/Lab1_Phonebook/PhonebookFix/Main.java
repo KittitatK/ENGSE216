@@ -1,4 +1,4 @@
-package PhonebookFix;
+package LAB.Lab1_Phonebook.PhonebookFix;
 import java.util.Scanner;
 
 //เรียกใช้
@@ -52,12 +52,6 @@ public class Main {
                 case "delete":
 
                     pb.delete();
-                    
-                    break;
-
-                case "cx":
-
-                    pb.addList();
                     
                     break;
 

@@ -1,4 +1,4 @@
-package PhonebookFix;
+package LAB.Lab1_Phonebook.PhonebookFix;
 
 //เป็นตัวดึงข้อมูล record มาทำฟังก์ชั่น add del insert edit sort
 import java.util.Scanner;
@@ -21,14 +21,6 @@ public class phoneBook {
             data = Integer.parseInt(arrSize);
             l =  new list(data);
         }
-    }
-
-    public void addList(){
-        System.out.print("Add info size : ");
-        int arrSize1 = input.nextInt();
-
-        data = data + arrSize1;
-        l =  new list(data);
     }
 
     public void add(){

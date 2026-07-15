@@ -1,5 +1,4 @@
-package LAB.Lab1_Phonebook;
-
+package LAB.Lab1_Phonebook.oldFile;
 import java.util.Scanner;
 
 public class mainPro {

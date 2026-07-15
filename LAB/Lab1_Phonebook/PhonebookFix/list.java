@@ -1,4 +1,4 @@
-package PhonebookFix;
+package LAB.Lab1_Phonebook.PhonebookFix;
 //เอาไว้เรียงข้อมูลให้เหลือarrayเดียวจาก 3 array n[] surn[] tel[] Status: to do
 public class list {
     private recordData[] data;
@@ -15,7 +15,7 @@ public class list {
     }
 
     void add(String name ,String surname, String tel){
-        if (!isfull()){
+        if (!isFull()){
 
             recordData n = new recordData(name, surname, tel);
             this.data[count]  = n;
@@ -63,7 +63,7 @@ public class list {
     void insert(int it,String name3 ,String surname3, String tel3){
         
         if (!isEmpty() && it >= 0 && it < count){
-            if (!isfull()) {
+            if (!isFull()) {
 
                 for(int i = count ; i>it ;i--){//ขยับไปด้านหลัง
 
@@ -120,7 +120,7 @@ public class list {
     }
 
 
-    boolean isfull(){
+    boolean isFull(){
         return  count == this.data.length;
     }
     boolean isEmpty(){
