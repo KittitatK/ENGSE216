@@ -1,4 +1,4 @@
-package LAB.Lab1_Phonebook.PhonebookFix;
+package LAB.Lab1_Phonebook.Phonebook;
 import java.util.Scanner;
 
 //เรียกใช้
@@ -12,6 +12,7 @@ public class Main {
         int con = 1;
 
         pb.setList();
+        pb.dataBasic();
 
         do {
             System.out.println("\nadd         edit ");
@@ -28,36 +29,34 @@ public class Main {
                 case "add":
 
                     pb.add();
-                        
                     break;
 
                 case "edit":
 
                     pb.edit();
-                    
                     break;
 
                 case "insert":
 
                     pb.insert();
-
                     break;
             
                 case "sort":
                     
                     pb.sort();
-                    
                     break;
 
                 case "delete":
 
                     pb.delete();
-                    
                     break;
 
                 case "end":
+
                         con = 0;
-                        System.out.println("Closing the program... Good bye!");
+                        pb.end();
+                        System.out.println("\nClosing the program... Good bye!\n");
+                        
                     break;
 
                 default:

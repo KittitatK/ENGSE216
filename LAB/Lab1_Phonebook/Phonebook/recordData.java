@@ -1,4 +1,4 @@
-package LAB.Lab1_Phonebook.PhonebookFix;
+package LAB.Lab1_Phonebook.Phonebook;
 
 public class recordData {
     String name;
@@ -14,5 +14,3 @@ public class recordData {
     }
 
 }
-
-

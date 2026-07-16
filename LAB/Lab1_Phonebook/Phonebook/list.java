@@ -1,4 +1,4 @@
-package LAB.Lab1_Phonebook.PhonebookFix;
+package LAB.Lab1_Phonebook.Phonebook;
 //เอาไว้เรียงข้อมูลให้เหลือarrayเดียวจาก 3 array n[] surn[] tel[] Status: to do
 public class list {
     private recordData[] data;
@@ -21,10 +21,10 @@ public class list {
             this.data[count]  = n;
 
             count++;
-            System.out.println("\nState : Successful\n");
+            System.out.println("\nState : Successful");
         }else{
             System.out.println("\nThere's no more space\n");
-            System.out.println("\nState : Unsuccessful\n");
+            System.out.println("State : Unsuccessful\n");
         }
     }
 
@@ -37,8 +37,9 @@ public class list {
             }   
             count--;
             data[count] = null;
+
+            System.out.println("\nState : Successful");
         }else{
-            System.out.println("");
             System.out.println("\nThere's empty space you can't delete!!\n");
         }
     }
@@ -51,12 +52,13 @@ public class list {
             recordData n2 = new recordData(name2, surname2, tel2);
             this.data[e] = n2;
 
-            System.out.println("\nState : Successful\n");
+            System.out.println("\nState : Successful");
+            
 
         }else{ 
             System.out.println("_______________________________________");
             System.out.println("\nThere's empty space you can't edit!!\n");
-            System.out.println("\nState : Unsuccessful\n");
+            System.out.println("State : Unsuccessful\n");
         }
     }
 
@@ -76,14 +78,14 @@ public class list {
                 data[it] = n3;
                 count++;
 
-                System.out.println("\nState : Successful\n");
+                System.out.println("\nState : Successful");
 
             }else{
                 System.out.println("\nThere's no space anymore\n");
-                System.out.println("\nState : Unsuccessful\n");
+                System.out.println("State : Unsuccessful\n");
             }
         }else{
-            System.out.println("\nNo data\n");
+            System.out.println("\nNo data");
             System.out.println("\nState : Unsuccessful\n");
         }
 
@@ -110,12 +112,12 @@ public class list {
                     }
                 }
             }
-            System.out.println("\nSorted data successfully\n");
+            System.out.println("\nSorted data successfully");
             
         } else {
             System.out.println("_______________________________________");
             System.out.println("\nDon't have data in system\n");
-            System.out.println("\nState : Unsuccessful\n");
+            System.out.println("State : Unsuccessful\n");
         }
     }
 

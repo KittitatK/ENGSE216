@@ -1,4 +1,4 @@
-package LAB.Lab1_Phonebook.PhonebookFix;
+package LAB.Lab1_Phonebook.Phonebook;
 
 //เป็นตัวดึงข้อมูล record มาทำฟังก์ชั่น add del insert edit sort
 import java.util.Scanner;
@@ -25,6 +25,8 @@ public class phoneBook {
 
     public void add(){
 
+        l.showall();
+
         System.out.print("Name : ");
         String n = input.nextLine();
                     
@@ -41,7 +43,17 @@ public class phoneBook {
     }
 
     public void delete(){
+
+        l.showall();
+
         System.out.print("Which NO. you want to delete : ");
+        while (!input.hasNextInt()) {
+            System.out.println("Error: input only integer");
+            System.out.print("Press the number : ");
+            
+            input.next(); // เคลียร์ข้อความ String ขยะที่ผู้ใช้พิมพ์ค้างไว้ทิ้งไป
+        }
+
         int d1 = input.nextInt();
                     
 
@@ -73,7 +85,16 @@ public class phoneBook {
 
     public void edit(){
 
+        l.showall();
+
         System.out.println("NO. : ");
+        while (!input.hasNextInt()) {
+            System.out.println("Error: input only integer");
+            System.out.print("Press the number : ");
+            
+            input.next(); // เคลียร์ข้อความ String ขยะที่ผู้ใช้พิมพ์ค้างไว้ทิ้งไป
+        }
+
         int edno = input.nextInt();
         input.nextLine();
 
@@ -93,9 +114,20 @@ public class phoneBook {
     }
 
     public void insert(){
+
+        l.showall();
+
         System.out.print("NO. : ");
+        while (!input.hasNextInt()) {
+            System.out.println("Error: input only integer");
+            System.out.print("Press the number : ");
+            
+            input.next(); // เคลียร์ข้อความ String ขยะที่ผู้ใช้พิมพ์ค้างไว้ทิ้งไป
+        }
+
         int itno = input.nextInt();
         input.nextLine();
+
 
         System.out.print("Name : ");
         String itn = input.nextLine();
@@ -120,4 +152,19 @@ public class phoneBook {
         
     }
 
+    public void end(){
+        l.showall();
+    }
+
+
+    public void dataBasic(){
+        System.out.println("\n--- Loading Basic Data... ---");
+        
+        l.add("Somchai","Jaidee","0875981364");
+        l.add("Jo-ai","Datunde","0895971314");
+        l.add("Wyatt","Lay","0795981344");
+        l.add("Paris","Lei","0475881544");
+        
+        System.out.println("--- Basic Data Loaded! ---\n");
+    }
 }
