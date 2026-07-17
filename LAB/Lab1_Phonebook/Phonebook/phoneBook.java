@@ -36,8 +36,13 @@ public class phoneBook {
         System.out.print("Tel : ");
         String t = input.nextLine();
 
+        
+        
+            
+        
+
+        
         l.add(n,s,t);
-    
         l.showall();
 
     }

@@ -16,12 +16,23 @@ public class list {
 
     void add(String name ,String surname, String tel){
         if (!isFull()){
+            boolean checktemp = false;
 
-            recordData n = new recordData(name, surname, tel);
-            this.data[count]  = n;
+            for(int i = 0; i < count ; i++){
+                if(data[i].tel.equals(tel)){
+                    System.out.println("This Tel Is Already Added!!");
+                    checktemp = true;
+                    break;
+                }
+            }
 
-            count++;
-            System.out.println("\nState : Successful");
+            if(checktemp == false){
+                recordData n = new recordData(name, surname, tel);
+                this.data[count]  = n;
+                count++;
+                System.out.println("\nState : Successful");
+            }
+            
         }else{
             System.out.println("\nThere's no more space\n");
             System.out.println("State : Unsuccessful\n");
@@ -48,12 +59,21 @@ public class list {
     void edit(int e,String name2 ,String surname2, String tel2){
         if (!isEmpty() && e >= 0  && e < count){  
             
+            boolean checktemp = false;
 
-            recordData n2 = new recordData(name2, surname2, tel2);
-            this.data[e] = n2;
+            for(int i = 0 ; i < count ; i++){
+               if (data[i].tel.equals(tel2)){
+                    System.out.println("This Tel Is Already Added!!");
+                    checktemp = true;
+                    break;
+                }
+            }
 
-            System.out.println("\nState : Successful");
-            
+            if(checktemp == false){
+                recordData n2 = new recordData(name2, surname2, tel2);
+                this.data[e] = n2;
+                System.out.println("\nState : Successful");
+            }
 
         }else{ 
             System.out.println("_______________________________________");
@@ -66,19 +86,33 @@ public class list {
         
         if (!isEmpty() && it >= 0 && it < count){
             if (!isFull()) {
+                boolean checktemp = false;
 
-                for(int i = count ; i>it ;i--){//ขยับไปด้านหลัง
+                for(int i = 0 ; i < count ; i++){
+                    if (data[i].tel.equals(tel3)) {
+                        System.out.println("This Tel Is Already Added!!");
+                        checktemp = true;
+                        break;
+                    }
+                }
 
-                    data[i] = data[i-1];
-                    
+                if( checktemp == false){
+
+                    for(int i = count ; i>it ;i--){//ขยับไปด้านหลัง
+
+                        data[i] = data[i-1];
+
+                    }   
+
+                    recordData n3 = new recordData(name3, surname3, tel3);
+                    data[it] = n3;
+                    count++;
+
+                    System.out.println("\nState : Successful");
+
+                }
+
                 
-                }   
-
-                recordData n3 = new recordData(name3, surname3, tel3);
-                data[it] = n3;
-                count++;
-
-                System.out.println("\nState : Successful");
 
             }else{
                 System.out.println("\nThere's no space anymore\n");
