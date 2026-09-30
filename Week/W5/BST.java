@@ -2,48 +2,41 @@ package Week.W5;
 
 public class BST {
     BTNode sentinel = new BTNode();
-    BTNode travelBtNode = new BTNode();
-    BTNode root = new BTNode();
+    BTNode root;
+    BTNode travel;
+    int cnode = 0;
 
-    BST() {
+    public BST() {
         root = sentinel;
     }
 
-    public void buildTree (BTNode t, int x, int flag){
+    public void buildTree(BTNode t, int x, int flag) {
         if (t != sentinel) {
             travel = t;
-            if (x<t.info) {
-                flag =1;
-                buildTree(t.left,x,flag);
-            }else{
+            if (x < t.info) {
+                flag = 1;
+                buildTree(t.left, x, flag);
+            } else {
                 flag = 2;
-                buildTree(t.right,x,flag);
+                buildTree(t.right, x, flag);
             }
-        }
-
-        else {
+        } else {
             BTNode newNode = new BTNode();
             newNode.info = x;
             newNode.left = sentinel;
             newNode.right = sentinel;
+            newNode.parent = travel; // Assign parent
 
-            if (cnode == 0){
+            if (cnode == 0) {
                 root = newNode;
                 cnode++;
-            }
-
-            else if (flag ==1){
+            } else if (flag == 1) {
                 travel.left = newNode;
                 cnode++;
-
-            }
-
-            else{
+            } else {
                 travel.right = newNode;
                 cnode++;
             }
         }
-
     }
-    
 }
