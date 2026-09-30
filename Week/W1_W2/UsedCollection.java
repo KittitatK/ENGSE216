@@ -1,5 +1,5 @@
 package Week.W1_W2;
-import java.util.Scanner;
+
 
 public class UsedCollection {
     public static void main(String[] arg){

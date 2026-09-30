@@ -67,7 +67,10 @@ public class Main {
         } while (con != 0);
 
         
+        input.close();
     }
+
+    
     
 }
 

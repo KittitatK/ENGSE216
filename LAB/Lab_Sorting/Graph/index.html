@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Benchmark & Visualizer | ENGSE216</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-decorations">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-badge">ENGSE216 • Data Structures & Algorithms</div>
+            <h1 class="header-title">Sorting Benchmark & Visualizer</h1>
+            <p class="header-desc">
+                เครื่องมือจำลองแอนิเมชันการเรียงลำดับแบบ Real-time และวิเคราะห์ผลการทดสอบเวลาระหว่างข้อมูลจริงกับตัวอย่าง
+            </p>
+        </header>
+
+        <!-- Top Navigation View Switcher -->
+        <nav class="view-nav-tabs">
+            <button type="button" class="nav-tab-btn active" data-view="animation" id="nav-btn-anim">
+                <span class="tab-icon">🎬</span> แอนิเมชันการเรียงลำดับ (Sorting Animation)
+            </button>
+            <button type="button" class="nav-tab-btn" data-view="benchmark" id="nav-btn-bench">
+                <span class="tab-icon">📊</span> กราฟผลการทดสอบเวลา (Benchmark Graph)
+            </button>
+            <button type="button" class="nav-tab-btn" data-view="rank" id="nav-btn-rank">
+                <span class="tab-icon">🏆</span> จัดอันดับความแรง (Machine Rank)
+            </button>
+            <button type="button" class="nav-tab-btn" data-view="history" id="nav-btn-history">
+                <span class="tab-icon">🕒</span> ประวัติการบันทึก (Log History)
+            </button>
+        </nav>
+
+        <!-- ===================================================================
+             VIEW 1: SORTING ANIMATION (แอนิเมชันดูการเรียงแบบ Real-time)
+             =================================================================== -->
+        <section id="view-animation" class="view-panel active">
+            <!-- Animation Control Bar -->
+            <div class="card anim-controls-card">
+                <!-- Source Toggle in Animation: ตัวอย่าง vs ข้อมูลจริงของ User -->
+                <div class="anim-source-header">
+                    <div class="source-segmented-control anim-segmented-control">
+                        <button type="button" class="source-tab-btn active" data-anim-source="sample" id="tab-anim-sample">
+                            <span class="source-icon">💡</span> ชุดตัวอย่างจำลอง
+                        </button>
+                        <button type="button" class="source-tab-btn" data-anim-source="user" id="tab-anim-user">
+                            <span class="source-icon">⚡</span> ข้อมูลจริง (Scale 500 - 100k)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- User Real Scale Panel (แสดงเมื่อเลือก ข้อมูลจริงของ User) -->
+                <div class="user-anim-panel" id="user-anim-panel" style="display: none;">
+                    <div class="user-anim-controls-row">
+                        <div class="user-scale-group">
+                            <span class="control-label">🔍 เลือกขนาด N จริง:</span>
+                            <div class="user-n-pills" id="anim-user-n-pills">
+                                <button type="button" class="anim-n-pill active" data-n="500">500</button>
+                                <button type="button" class="anim-n-pill" data-n="1000">1,000</button>
+                                <button type="button" class="anim-n-pill" data-n="10000">10,000</button>
+                                <button type="button" class="anim-n-pill" data-n="50000">50,000</button>
+                                <button type="button" class="anim-n-pill" data-n="100000">100,000</button>
+                            </div>
+                        </div>
+                        <div class="user-dataset-toggle">
+                            <span class="control-label">ที่มาข้อมูล:</span>
+                            <div class="mode-toggle-group">
+                                <button type="button" class="mode-btn active" data-dataset="seed" id="btn-dataset-seed">
+                                    🎲 Seed = 42 (เหมือนใน Java)
+                                </button>
+                                <button type="button" class="mode-btn" data-dataset="custom" id="btn-dataset-custom">
+                                    ✍️ กรอกตัวเลขเอง
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Custom array input row (hidden by default) -->
+                    <div class="custom-array-input-row" id="custom-array-input-row" style="display: none;">
+                        <input type="text" id="custom-array-text" class="custom-array-input" 
+                            placeholder="พิมพ์ตัวเลขคั่นด้วยจุลภาค เช่น 45, 12, 89, 3, 27, 60, 15, 78, 92, 5">
+                        <button type="button" id="btn-apply-custom-array" class="btn btn-outline btn-sm">
+                            นำเข้าตัวเลขนี้
+                        </button>
+                    </div>
+                </div>
+
+                <div class="anim-controls-grid">
+                    <!-- Playback Buttons -->
+                    <div class="control-block">
+                        <button type="button" id="anim-play-btn" class="btn btn-primary btn-play">
+                            <span id="play-btn-icon">▶</span> <span id="play-btn-text">เริ่มเล่น (Start)</span>
+                        </button>
+                        <button type="button" id="anim-reset-btn" class="btn btn-outline" title="สุ่มชุดข้อมูลใหม่">
+                            🔄 สุ่มใหม่ (Shuffle)
+                        </button>
+                    </div>
+
+                    <!-- Display Mode (4-in-1 Compare vs Single) -->
+                    <div class="control-block">
+                        <span class="control-label">โหมดแสดงผล:</span>
+                        <div class="mode-toggle-group">
+                            <button type="button" class="mode-btn active" data-anim-mode="grid">
+                                🔲 เทียบพร้อมกัน 4 ตัว
+                            </button>
+                            <button type="button" class="mode-btn" data-anim-mode="single">
+                                🔍 ดูเดี่ยวเจาะลึก
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Single Selector (Visible in single mode) -->
+                    <div class="control-block" id="single-algo-group" style="display: none;">
+                        <span class="control-label">เลือกอัลกอริทึม:</span>
+                        <div class="algo-pill-group">
+                            <button type="button" class="algo-pill active" data-algo="bubble">Bubble</button>
+                            <button type="button" class="algo-pill" data-algo="selection">Selection</button>
+                            <button type="button" class="algo-pill" data-algo="insertion">Insertion</button>
+                            <button type="button" class="algo-pill" data-algo="quick">Quick</button>
+                        </div>
+                    </div>
+
+                    <!-- Sliders (Speed & Size) -->
+                    <div class="control-block sliders-block">
+                        <div class="slider-item">
+                            <label for="speed-slider">ความเร็ว: <span id="speed-val" class="highlight-val">เร็ว</span></label>
+                            <input type="range" id="speed-slider" min="1" max="100" value="85">
+                        </div>
+                        <div class="slider-item" id="sample-size-slider-box">
+                            <label for="size-slider">จำนวนแท่ง (N): <span id="size-val" class="highlight-val">40</span></label>
+                            <input type="range" id="size-slider" min="15" max="100" value="40" step="5">
+                        </div>
+                        <div class="slider-item" id="user-size-info-box" style="display: none;">
+                            <label>ขนาด N ข้อมูลจริง:</label>
+                            <span class="user-active-n-badge" id="user-active-n-badge">N = 500 (Seed: 42)</span>
+                        </div>
+                    </div>
+
+                    <!-- Audio Effect Toggle -->
+                    <div class="control-block audio-block">
+                        <button type="button" id="audio-toggle-btn" class="btn btn-ghost btn-sm" title="เปิด/ปิดเสียง Effect ซินธิไซเซอร์">
+                            🔊 เสียง: <span id="audio-status" class="audio-on">เปิด</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Color Legend -->
+            <div class="anim-legend">
+                <span class="legend-item"><span class="legend-bar bar-default"></span> ข้อมูลทั่วไป (White)</span>
+                <span class="legend-item"><span class="legend-bar bar-compare"></span> กำลังเปรียบเทียบ (Red)</span>
+                <span class="legend-item"><span class="legend-bar bar-pivot"></span> Pivot / Min (Yellow/Cyan)</span>
+                <span class="legend-item"><span class="legend-bar bar-swap"></span> กำลังสลับ (Pink)</span>
+                <span class="legend-item"><span class="legend-bar bar-sorted"></span> จัดเรียงเสร็จแล้ว (Green)</span>
+            </div>
+
+            <!-- 4-in-1 Grid View (เปรียบเทียบพร้อมกัน 4 ตัว) -->
+            <div class="anim-grid-container" id="anim-grid-view">
+                <!-- Bubble Sort Box -->
+                <div class="anim-box box-bubble">
+                    <div class="anim-box-header">
+                        <div class="anim-title">
+                            <span class="color-dot dot-bubble"></span>
+                            <h3>Bubble Sort</h3>
+                            <span class="complexity-tag">O(n²)</span>
+                        </div>
+                        <div class="anim-stats">
+                            <span class="stat-badge">เปรียบเทียบ: <strong id="bubble-comp">0</strong></span>
+                            <span class="stat-badge">สลับ: <strong id="bubble-swap">0</strong></span>
+                            <span class="stat-badge">เวลา: <strong id="bubble-time">0.0 ms</strong></span>
+                            <span class="stat-status" id="bubble-status">พร้อมเริ่ม</span>
+                        </div>
+                    </div>
+                    <div class="anim-progress-wrapper">
+                        <div class="anim-progress-bar" id="bubble-progress"></div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="canvas-bubble"></canvas>
+                    </div>
+                </div>
+
+                <!-- Selection Sort Box -->
+                <div class="anim-box box-selection">
+                    <div class="anim-box-header">
+                        <div class="anim-title">
+                            <span class="color-dot dot-selection"></span>
+                            <h3>Selection Sort</h3>
+                            <span class="complexity-tag">O(n²)</span>
+                        </div>
+                        <div class="anim-stats">
+                            <span class="stat-badge">เปรียบเทียบ: <strong id="selection-comp">0</strong></span>
+                            <span class="stat-badge">สลับ: <strong id="selection-swap">0</strong></span>
+                            <span class="stat-badge">เวลา: <strong id="selection-time">0.0 ms</strong></span>
+                            <span class="stat-status" id="selection-status">พร้อมเริ่ม</span>
+                        </div>
+                    </div>
+                    <div class="anim-progress-wrapper">
+                        <div class="anim-progress-bar" id="selection-progress"></div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="canvas-selection"></canvas>
+                    </div>
+                </div>
+
+                <!-- Insertion Sort Box -->
+                <div class="anim-box box-insertion">
+                    <div class="anim-box-header">
+                        <div class="anim-title">
+                            <span class="color-dot dot-insertion"></span>
+                            <h3>Insertion Sort</h3>
+                            <span class="complexity-tag">O(n²)</span>
+                        </div>
+                        <div class="anim-stats">
+                            <span class="stat-badge">เปรียบเทียบ: <strong id="insertion-comp">0</strong></span>
+                            <span class="stat-badge">สลับ/เลื่อน: <strong id="insertion-swap">0</strong></span>
+                            <span class="stat-badge">เวลา: <strong id="insertion-time">0.0 ms</strong></span>
+                            <span class="stat-status" id="insertion-status">พร้อมเริ่ม</span>
+                        </div>
+                    </div>
+                    <div class="anim-progress-wrapper">
+                        <div class="anim-progress-bar" id="insertion-progress"></div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="canvas-insertion"></canvas>
+                    </div>
+                </div>
+
+                <!-- Quick Sort Box -->
+                <div class="anim-box box-quick">
+                    <div class="anim-box-header">
+                        <div class="anim-title">
+                            <span class="color-dot dot-quick"></span>
+                            <h3>Quick Sort</h3>
+                            <span class="complexity-tag tag-fast">O(n log n)</span>
+                        </div>
+                        <div class="anim-stats">
+                            <span class="stat-badge">เปรียบเทียบ: <strong id="quick-comp">0</strong></span>
+                            <span class="stat-badge">สลับ: <strong id="quick-swap">0</strong></span>
+                            <span class="stat-badge">เวลา: <strong id="quick-time">0.0 ms</strong></span>
+                            <span class="stat-status" id="quick-status">พร้อมเริ่ม</span>
+                        </div>
+                    </div>
+                    <div class="anim-progress-wrapper">
+                        <div class="anim-progress-bar" id="quick-progress"></div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="canvas-quick"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Single View Container (จอใหญ่ดูเดี่ยว) -->
+            <div class="anim-single-container" id="anim-single-view" style="display: none;">
+                <div class="anim-box box-single">
+                    <div class="anim-box-header">
+                        <div class="anim-title">
+                            <span class="color-dot" id="single-dot"></span>
+                            <h3 id="single-title">Bubble Sort</h3>
+                            <span class="complexity-tag" id="single-complexity">O(n²)</span>
+                        </div>
+                        <div class="anim-stats">
+                            <span class="stat-badge">เปรียบเทียบ: <strong id="single-comp">0</strong></span>
+                            <span class="stat-badge">สลับ / เลื่อน: <strong id="single-swap">0</strong></span>
+                            <span class="stat-badge">เวลา: <strong id="single-time">0.0 ms</strong></span>
+                            <span class="stat-status" id="single-status">พร้อมเริ่ม</span>
+                        </div>
+                    </div>
+                    <div class="anim-progress-wrapper">
+                        <div class="anim-progress-bar" id="single-progress"></div>
+                    </div>
+                    <div class="canvas-wrapper single-canvas-wrapper">
+                        <canvas id="canvas-single"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             VIEW 2: BENCHMARK GRAPH (ตารางกรอกผลและกราฟประสิทธิภาพ)
+             =================================================================== -->
+        <section id="view-benchmark" class="view-panel">
+            <main class="main-layout">
+                <!-- Left Panel: Input Table -->
+                <section class="card input-card">
+                    <div class="input-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <!-- Data Source Tabs: ข้อมูลจริง VS ข้อมูลตัวอย่าง -->
+                        <div class="source-segmented-control" style="margin-bottom: 0;">
+                            <button type="button" class="source-tab-btn active" data-source="user" id="tab-source-user">
+                                <span class="source-icon">✍️</span> ข้อมูลจริง (User Data)
+                            </button>
+                            <button type="button" class="source-tab-btn" data-source="sample" id="tab-source-sample">
+                                <span class="source-icon">💡</span> ข้อมูลตัวอย่าง (Sample)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sample Data Banner (แสดงเมื่ออยู่ในโหมดตัวอย่าง) -->
+                    <div class="sample-notice-banner" id="sample-notice-banner" style="display: none;">
+                        <div class="notice-text">
+                            <strong>💡 ชุดข้อมูลตัวอย่าง (Sample Demo)</strong>
+                            <p>สามารถคัดลอกลงข้อมูลจริงเพื่อปรับแต่งหรือกรอกเพิ่มได้</p>
+                        </div>
+                        <button type="button" id="btn-copy-sample-to-user" class="btn btn-primary btn-sm">
+                            📥 คัดลอกลงข้อมูลจริง
+                        </button>
+                    </div>
+
+                    <!-- User Data Controls (Quick Paste & Selector) -->
+                    <div id="user-controls-section">
+                        <!-- Quick Paste Box (ก๊อปมาวางครั้งเดียวขึ้นเลย) -->
+                        <div class="quick-paste-zone">
+                            <div class="quick-paste-header">
+                                <label for="quick-paste-box" class="quick-paste-label">
+                                    <span class="icon">📋</span> วางตารางจาก Terminal ตรงนี้ได้เลย (ข้อมูลจริง)
+                                </label>
+                                <span class="quick-paste-badge">Auto-detect</span>
+                            </div>
+                            <div class="quick-paste-wrapper">
+                                <textarea id="quick-paste-box" class="quick-paste-textarea" rows="2" 
+                                    placeholder="ก๊อปปี้ตารางจาก Terminal แล้วกด Ctrl+V ที่นี่... ข้อมูลจริงและกราฟจะขึ้นให้ทันที"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- N-Size Filter / Selector Pills (เลือกดู 500, 1000, 10000, 50000, 100000) -->
+                        <div class="n-selector-box">
+                            <div class="n-selector-header">
+                                <span class="n-selector-title">🔍 เลือกขนาด N ที่ต้องการดู/กรอก:</span>
+                                <div class="n-selector-actions">
+                                    <button type="button" id="btn-select-all-n" class="btn-link">เลือกทั้งหมด</button>
+                                    <span class="divider">•</span>
+                                    <button type="button" id="btn-clear-all-n" class="btn-link">ล้าง</button>
+                                </div>
+                            </div>
+                            <div class="n-pills-row" id="n-pills-container">
+                                <button type="button" class="n-pill active" data-n="500">500</button>
+                                <button type="button" class="n-pill active" data-n="1000">1,000</button>
+                                <button type="button" class="n-pill active" data-n="10000">10,000</button>
+                                <button type="button" class="n-pill active" data-n="50000">50,000</button>
+                                <button type="button" class="n-pill active" data-n="100000">100,000</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-section-header">
+                        <span class="table-section-title" id="table-display-title">ตารางข้อมูลจริง (User Data)</span>
+                        <span class="table-unit-tag">หน่วยเวลา: มิลลิวินาที (ms)</span>
+                    </div>
+
+                    <form id="benchmark-form">
+                        <div class="table-responsive">
+                            <table class="data-table" id="data-input-table">
+                                <thead>
+                                    <tr>
+                                        <th class="th-n">N</th>
+                                        <th class="th-bubble"><span class="color-dot dot-bubble"></span>Bubble</th>
+                                        <th class="th-selection"><span class="color-dot dot-selection"></span>Selection</th>
+                                        <th class="th-insertion"><span class="color-dot dot-insertion"></span>Insertion</th>
+                                        <th class="th-quick"><span class="color-dot dot-quick"></span>Quick</th>
+                                        <th class="th-action"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body">
+                                    <!-- Generated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="form-footer-actions">
+                            <button type="button" id="btn-add-row" class="btn btn-outline btn-sm">
+                                ➕ เพิ่มแถว N กำหนดเอง
+                            </button>
+                            <div class="action-buttons-group">
+                                <button type="button" id="btn-clear" class="btn btn-ghost btn-sm">
+                                    ล้างข้อมูล
+                                </button>
+                                <button type="submit" id="btn-submit" class="btn btn-primary">
+                                    🚀 สร้างกราฟ (Submit)
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Right Panel: Graph & Controls -->
+                <section class="card graph-card" id="graph-section">
+                    <div class="card-header">
+                        <div class="card-title-group">
+                            <span class="card-icon">📈</span>
+                            <h2 class="card-title" id="graph-main-title">กราฟเปรียบเทียบประสิทธิภาพ (ข้อมูลจริง)</h2>
+                        </div>
+                        <div class="graph-header-actions">
+                            <!-- Scale Toggle -->
+                            <div class="toggle-group" id="scale-toggle-group">
+                                <span class="toggle-label">สเกลแกน Y:</span>
+                                <button type="button" class="btn-toggle active" data-scale="linear" id="scale-linear">Linear</button>
+                                <button type="button" class="btn-toggle" data-scale="logarithmic" id="scale-log" title="Log scale ช่วยให้มองเห็น Quick Sort ได้ชัดเจนแม้อยู่ในหลัก ms ต่ำๆ">Logarithmic (Log₁₀)</button>
+                            </div>
+                            <!-- Download PNG -->
+                            <button type="button" id="btn-download" class="btn btn-outline btn-sm" title="บันทึกรูปกราฟเพื่อนำไปใส่รายงาน">
+                                💾 ดาวน์โหลดรูปภาพ
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Algorithm Filter Tabs (ดูทีละตัว) -->
+                    <div class="filter-bar">
+                        <span class="filter-label">เลือกดูอัลกอริทึม:</span>
+                        <div class="filter-tabs" id="filter-tabs">
+                            <button type="button" class="tab-btn active" data-filter="all">
+                                📊 ดูทั้งหมด (All)
+                            </button>
+                            <button type="button" class="tab-btn tab-bubble" data-filter="bubble">
+                                <span class="tab-indicator"></span> Bubble Sort
+                            </button>
+                            <button type="button" class="tab-btn tab-selection" data-filter="selection">
+                                <span class="tab-indicator"></span> Selection Sort
+                            </button>
+                            <button type="button" class="tab-btn tab-insertion" data-filter="insertion">
+                                <span class="tab-indicator"></span> Insertion Sort
+                            </button>
+                            <button type="button" class="tab-btn tab-quick" data-filter="quick">
+                                <span class="tab-indicator"></span> Quick Sort
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chart Canvas Container -->
+                    <div class="chart-wrapper">
+                        <canvas id="benchmarkChart"></canvas>
+                    </div>
+
+                    <!-- Insights & Analysis Summary Cards -->
+                    <div class="insights-grid" id="insights-container">
+                        <div class="insight-card card-fastest">
+                            <div class="insight-icon">⚡</div>
+                            <div class="insight-content">
+                                <div class="insight-label">เร็วที่สุดที่ N สูงสุด</div>
+                                <div class="insight-value" id="insight-fastest">-</div>
+                                <div class="insight-sub" id="insight-fastest-time">-</div>
+                            </div>
+                        </div>
+                        <div class="insight-card card-slowest">
+                            <div class="insight-icon">🐢</div>
+                            <div class="insight-content">
+                                <div class="insight-label">ช้าที่สุดที่ N สูงสุด</div>
+                                <div class="insight-value" id="insight-slowest">-</div>
+                                <div class="insight-sub" id="insight-slowest-time">-</div>
+                            </div>
+                        </div>
+                        <div class="insight-card card-ratio">
+                            <div class="insight-icon">🔥</div>
+                            <div class="insight-content">
+                                <div class="insight-label">ความเร็วต่างกันสูงสุด</div>
+                                <div class="insight-value" id="insight-ratio">-</div>
+                                <div class="insight-sub">Quick vs Bubble</div>
+                            </div>
+                        </div>
+                        <div class="insight-card card-complexity">
+                            <div class="insight-icon">📐</div>
+                            <div class="insight-content">
+                                <div class="insight-label">Time Complexity</div>
+                                <div class="complexity-badges">
+                                    <span class="badge b-bubble">Bubble: O(n²)</span>
+                                    <span class="badge b-select">Selection: O(n²)</span>
+                                    <span class="badge b-insert">Insertion: O(n²)</span>
+                                    <span class="badge b-quick">Quick: O(n log n)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </section>
+
+        <!-- ===================================================================
+             VIEW 3: MACHINE RANK (จัดอันดับความแรงเครื่อง)
+             =================================================================== -->
+        <section id="view-rank" class="view-panel">
+            <div class="card rank-card" style="max-width: 900px; margin: 0 auto;">
+                <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-bottom: 20px;">
+                    <div class="card-title-group">
+                        <span class="card-icon">🏆</span>
+                        <h2 class="card-title">ลำดับความแรงของเครื่อง (Machine Rank) - TOP 20</h2>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 8px;">
+                        ข้อมูลสเปคเครื่องที่ใช้ทดสอบโปรแกรม ข้อมูลนี้ถูกบันทึกแบบเปิดเผยอยู่ในไฟล์ <code>ranks.js</code> 
+                        (ทุกคนที่โหลดโปรเจกต์ไปจะเห็นข้อมูลชุดเดียวกัน) <br>
+                        <em>* ปลอดภัย: ไม่มีการเก็บข้อมูลส่วนตัวหรือรหัสประจำเครื่องใดๆ ทั้งสิ้น</em>
+                    </p>
+                </div>
+                
+                <!-- Real-time User Rank Banner -->
+                <div id="user-rank-display" style="background: rgba(99, 102, 241, 0.1); border: 1px solid var(--color-accent); border-radius: 8px; padding: 16px; margin-bottom: 20px; text-align: center; display: none;">
+                    <h3 style="color: #f8fafc; margin: 0; font-size: 1.25rem;">
+                        🏅 อันดับปัจจุบันของคุณ: <span id="user-rank-number" style="color: var(--color-accent); font-size: 1.5rem; font-weight: 800;">-</span>
+                    </h3>
+                    <p style="color: #cbd5e1; margin: 5px 0 0 0; font-size: 0.9rem;">
+                        เวลาที่ทำได้: <span id="user-rank-score" style="font-weight: 600; color: #38bdf8;">-</span> ms (จาก Quick Sort N=100k)
+                    </p>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table rank-table" style="width: 100%; text-align: left; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-color);">
+                                <th style="text-align: left; padding: 12px;">Rank</th>
+                                <th style="text-align: left; padding: 12px;">ชื่อเครื่อง (Laptop Name)</th>
+                                <th style="text-align: left; padding: 12px;">CPU (Intel / AMD / Apple)</th>
+                                <th style="text-align: left; padding: 12px;">RAM</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rank-table-body">
+                            <!-- Injected by ranks.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             VIEW 4: LOG HISTORY (ประวัติการบันทึก)
+             =================================================================== -->
+        <section id="view-history" class="view-panel">
+            <div class="card history-card" style="max-width: 900px; margin: 0 auto;">
+                <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div class="card-title-group">
+                            <span class="card-icon">🕒</span>
+                            <h2 class="card-title">ประวัติการบันทึกข้อมูล (Local History)</h2>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 8px;">
+                            ข้อมูลประวัติจะถูกเก็บไว้เฉพาะในเครื่องของคุณเท่านั้น (Local Storage) หากเปิดในเครื่องอื่นจะไม่เห็นข้อมูลนี้
+                        </p>
+                    </div>
+                    <div>
+                        <button type="button" id="btn-clear-history" class="btn btn-outline btn-sm">🗑️ ล้างประวัติ</button>
+                    </div>
+                </div>
+                <div class="history-body">
+                    <div id="history-list" class="history-list">
+                        <!-- History items will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="ranks.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
